@@ -15,29 +15,24 @@ st.set_page_config(
 # --- 2. GIAO DIỆN PASTEL SOFT-TECH CHUẨN FONT TIẾNG VIỆT (CUSTOM CSS) ---
 st.markdown("""
     <style>
-    /* Sử dụng các font hệ thống hỗ trợ Tiếng Việt tốt nhất để chống lỗi font chữ Hướng và Chiến lược */
     * { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
     .stApp { background-color: #f8fafc; }
     
-    /* 🌸 Tùy chỉnh Sidebar màu Pastel sáng sủa, đáng yêu */
     [data-testid="stSidebar"] {
         background-color: #f0f4f8 !important;
         border-right: 2px solid #e2e8f0;
     }
     
-    /* Tiêu đề nhỏ trong Sidebar */
     [data-testid="stSidebar"] .stMarkdown p, 
     [data-testid="stSidebar"] label {
         color: #1e3a8a !important;
         font-weight: 600 !important;
     }
     
-    /* Cấu hình riêng cho chữ hiển thị bên trong Selectbox không bị lỗi màu */
     [data-testid="stSidebar"] div[data-baseweb="select"] {
         color: #1e3a8a !important;
     }
     
-    /* 🛠️ THU NHỎ LOGO THÀNH HÌNH TRÒN NHỎ XINH */
     [data-testid="stSidebar"] [data-testid="stImage"] img {
         max-width: 45% !important; 
         margin: 0 auto !important;
@@ -49,13 +44,11 @@ st.markdown("""
         padding: 4px;
     }
     
-    /* Hộp chọn vị trí bo tròn mềm mại */
     [data-testid="stSidebar"] select {
         border-radius: 12px !important;
         border: 1px solid #cbd5e1 !important;
     }
     
-    /* Thẻ KPI Metrics thiết kế bo tròn như kẹo ngọt, có viền màu sắc */
     div[data-testid="stMetric"] {
         background: white;
         border: 1px solid #e2e8f0;
@@ -66,7 +59,6 @@ st.markdown("""
     }
     [data-testid="stMetricValue"] { font-size: 30px; font-weight: 800; color: #1e3a8a; }
     
-    /* Tiêu đề chính lớn sửa lỗi font chữ tuyệt đối */
     .title-text { 
         color: #1e3a8a; 
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
@@ -77,7 +69,6 @@ st.markdown("""
     }
     .subtitle-text { color: #64748b; font-size: 15px; margin-bottom: 25px; }
     
-    /* Tùy chỉnh hệ thống Tab bo góc kẹo ngọt */
     .stTabs [data-baseweb="tab-list"] { gap: 12px; background-color: transparent; }
     .stTabs [data-baseweb="tab"] {
         height: 46px;
@@ -89,19 +80,18 @@ st.markdown("""
     }
     .stTabs [aria-selected="true"] { background-color: #1e3a8a !important; color: #ffffff !important; }
     
-    /* Hộp thoại nhận xét phong cách Chibi Insight */
     .insight-box {
         background: #ffffff;
         padding: 20px;
         border-radius: 18px;
         border-left: 6px solid #ffb6c1; 
-        box-shadow: 0 4px 20px rgba(0,0,0,0.01);
+        box-shadow: 0 4px 20 rgba(0,0,0,0.01);
         margin-bottom: 20px;
         margin-top: 15px;
     }
     .highlight-pink { color: #ff6b81; font-weight: 700; }
+    .highlight-navy { color: #1e3a8a; font-weight: 700; }
     
-    /* CSS CHO HUY HIỆU CẢNH BÁO MỚI SÁNG TẠO */
     .badge-container { display: flex; gap: 8px; margin-top: 5px; margin-bottom: 15px; }
     .badge-status {
         padding: 5px 12px;
@@ -157,7 +147,6 @@ with st.sidebar:
         options=["Toàn bộ ngành KHMT"] + sorted(list(t_df['Occupation (O*NET-SOC Title)'].unique()))
     )
     
-    # 💵 LỌC THU NHẬP TRÊN SIDEBAR
     st.markdown("##### 💵 Lọc theo Thu nhập của vị trí:")
     min_w = float(t_df['Occupation Mean Annual Wage'].min())
     max_w = float(t_df['Occupation Mean Annual Wage'].max())
@@ -179,9 +168,9 @@ with st.sidebar:
         </div>
     """, unsafe_allow_html=True)
 
-# Kết hợp bộ lọc chức danh và bộ lọc thu nhập động
+# Lọc cơ sở dữ liệu
 t_filtered_base = t_df[t_df['Occupation Mean Annual Wage'] >= wage_filter]
-valid_jobs = t_filtered_base['Occupation (O*NET-SOC Title)'].unique()
+valid_jobs = t_filtered_base['Occupation (O*NET-SOC Title)' ].unique()
 
 if selected_job == "Toàn bộ ngành KHMT":
     t_sub = t_df[t_df['Occupation (O*NET-SOC Title)'].isin(valid_jobs)]
@@ -189,45 +178,40 @@ if selected_job == "Toàn bộ ngành KHMT":
     d_sub = d_df[d_df['Occupation (O*NET-SOC Title)'].isin(valid_jobs)]
     e_sub = e_df[e_df['Occupation (O*NET-SOC Title)'].isin(valid_jobs)]
 else:
-    if selected_job in valid_jobs:
-        t_sub = t_df[t_df['Occupation (O*NET-SOC Title)'] == selected_job]
-        m_sub = m_df[m_df['Occupation (O*NET-SOC Title)'] == selected_job]
-        d_sub = d_df[d_df['Occupation (O*NET-SOC Title)'] == selected_job]
-        e_sub = e_df[e_df['Occupation (O*NET-SOC Title)'] == selected_job]
-    else:
-        st.warning(f"⚠️ Vị trí '{selected_job}' có mức lương thấp hơn mức lọc ${wage_filter:,.0f} trên thanh trượt! Đang hiển thị dữ liệu gốc.")
-        t_sub = t_df[t_df['Occupation (O*NET-SOC Title)'] == selected_job]
-        m_sub = m_df[m_df['Occupation (O*NET-SOC Title)'] == selected_job]
-        d_sub = d_df[d_df['Occupation (O*NET-SOC Title)'] == selected_job]
-        e_sub = e_df[e_df['Occupation (O*NET-SOC Title)'] == selected_job]
+    t_sub = t_df[t_df['Occupation (O*NET-SOC Title)'] == selected_job]
+    m_sub = m_df[m_df['Occupation (O*NET-SOC Title)'] == selected_job]
+    d_sub = d_df[d_df['Occupation (O*NET-SOC Title)'] == selected_job]
+    e_sub = e_df[e_df['Occupation (O*NET-SOC Title)'] == selected_job]
 
 # --- 5. NỘI DUNG CHÍNH ---
 st.markdown('<p class="title-text">✨ Báo Cáo Phân Tích Xu Hướng & Chiến Lược AI Agent ✨</p>', unsafe_allow_html=True)
 st.markdown(f'<p class="subtitle-text">Nghiên cứu khoa học từ Bộ dữ liệu WorkBank • Phân khúc: <b>{selected_job}</b></p>', unsafe_allow_html=True)
 
-# Hiển thị huy hiệu đánh giá rủi ro động
-df_desire_mean_check = d_sub.groupby('Occupation (O*NET-SOC Title)')['Automation Desire Rating'].mean().reset_index()
-df_capacity_mean_check = e_sub.groupby('Occupation (O*NET-SOC Title)')['Automation Capacity Rating'].mean().reset_index()
-if not df_desire_mean_check.empty and not df_capacity_mean_check.empty:
-    f_score = df_desire_mean_check['Automation Desire Rating'].mean() - df_capacity_mean_check['Automation Capacity Rating'].mean()
-    if f_score > 0.5:
-        badge_html = '<div class="badge-container"><span class="badge-status" style="background:#fee2e2; color:#ef4444;">🚨 Ma Sát Cao (Thiếu hụt Công nghệ)</span><span class="badge-status" style="background:#fef3c7; color:#d97706;">⚡ Cần Triển Khai Sớm</span></div>'
-    elif f_score < 0:
-        badge_html = '<div class="badge-container"><span class="badge-status" style="background:#dcfce7; color:#22c55e;">🟢 Ma Sát Thấp (AI Đáp Ứng Tốt)</span></div>'
-    else:
-        badge_html = '<div class="badge-container"><span class="badge-status" style="background:#e0f2fe; color:#0284c7;">🔵 Trạng Thái: Cân Bằng Thị Trường</span></div>'
-    st.markdown(badge_html, unsafe_allow_html=True)
+# Tính toán các chỉ số KPI động phục vụ Insight
+avg_w = t_sub['Occupation Mean Annual Wage'].mean() if not t_sub.empty else 0
+emp_count = t_sub['Occupation Employment'].sum() if not t_sub.empty else 0
+ai_readiness = (e_sub['Automation Capacity Rating'].mean() / 5) * 100 if len(e_sub) > 0 else 70.0
+
+# 🌸 TÍNH TOÁN ĐỘNG ĐIỂM MA SÁT CHO PHÂN KHÚC ĐANG CHỌN
+current_desire = d_sub['Automation Desire Rating'].mean() if not d_sub.empty else 3.5
+current_capacity = e_sub['Automation Capacity Rating'].mean() if not e_sub.empty else 3.5
+current_friction = current_desire - current_capacity
+
+if current_friction > 0.5:
+    badge_html = '<div class="badge-container"><span class="badge-status" style="background:#fee2e2; color:#ef4444;">🚨 Ma Sát Cao (Thiếu hụt Công nghệ)</span><span class="badge-status" style="background:#fef3c7; color:#d97706;">⚡ Cần Triển Khai Sớm</span></div>'
+elif current_friction < 0:
+    badge_html = '<div class="badge-container"><span class="badge-status" style="background:#dcfce7; color:#22c55e;">🟢 Ma Sát Thấp (AI Đáp Ứng Tốt)</span></div>'
+else:
+    badge_html = '<div class="badge-container"><span class="badge-status" style="background:#e0f2fe; color:#0284c7;">🔵 Trạng Thái: Cân Bằng Thị Trường</span></div>'
+st.markdown(badge_html, unsafe_allow_html=True)
 
 # Khối KPI
 c1, c2, c3 = st.columns(3)
 with c1:
-    avg_w = t_sub['Occupation Mean Annual Wage'].mean() if not t_sub.empty else 0
     st.metric("Thu Nhập TB Năm 💰", f"${avg_w/1000:,.1f}K", "USD/Năm")
 with c2:
-    emp_count = t_sub['Occupation Employment'].sum() if not t_sub.empty else 0
     st.metric("Quy Mô Lao Động 👥", f"{emp_count:,.0f}", "Nhân sự")
 with c3:
-    ai_readiness = (e_sub['Automation Capacity Rating'].mean() / 5) * 100 if len(e_sub) > 0 else 70.0
     st.metric("Khả Năng AI Đáp Ứng 🤖", f"{ai_readiness:.1f}%", "Chuyên gia đánh giá")
 
 st.markdown("<br>", unsafe_allow_html=True)
@@ -271,11 +255,12 @@ with tab1:
     fig_friction.update_layout(height=350, showlegend=False)
     st.plotly_chart(fig_friction, use_container_width=True)
 
-    st.markdown("""
+    # 🆕 HỘP THOẠI INSIGHT 1 ĐỘNG THEO VỊ TRÍ ĐANG CHỌN
+    st.markdown(f"""
     <div class="insight-box">
-        <b>💡 Khảo sát chuyên sâu Ma trận Phân bổ Thị trường & Điểm Ma sát:</b><br>
-        • <b>Phân hóa thu nhập & Quy mô:</b> Nhóm nghiên cứu cao cấp <i>(Computer and Information Research Scientists)</i> giữ mức lương đỉnh ngành (trên $150K) nhưng biệt lập với quy mô nhỏ. Ngược lại, nhóm nhân sự vận hành đại trà tập trung ở vùng quy mô lao động khổng lồ.<br>
-        • <span class="highlight-pink">Phân tích chuyên sâu về chỉ số Ma sát:</span> Biểu đồ thanh ngang tính toán khoảng cách chênh lệch giữa mong muốn giải phóng sức lao động và năng lực thực tế của AI. Những ngành nằm ở top đầu có điểm ma sát cao chứng tỏ nhân sự đang bị quá tải bởi các công việc lặp lại nhưng giải pháp AI hiện hành chưa tối ưu tốt, tạo ra điểm nghẽn cổ chai trong quản trị vận hành.
+        <b>💡 Khảo sát chuyên sâu phân khúc <span class="highlight-navy">{selected_job}</span>:</b><br>
+        • <b>Định vị tài chính:</b> Nhóm nhân sự đang chọn sở hữu mức thu nhập trung bình năm đạt <span class="highlight-pink">${avg_w:,.2f} USD</span> với tổng quy mô đại diện là <span class="highlight-pink">{emp_count:,.0f} lao động</span>.<br>
+        • <b>Insight động về Ma sát Kỹ thuật:</b> Chỉ số ma sát đo lường của phân khúc này hiện tại đang ở mức <span class="highlight-pink">{current_friction:.2f} điểm</span>. {f'Mức độ ma sát dương lớn chứng tỏ vị trí <b>{selected_job}</b> đang đối diện với áp lực công việc lặp lại cao vượt quá khả năng xử lý hiện thời của AI hệ thống, rất cần doanh nghiệp đầu tư nâng cấp cấu trúc Agent tự trị ngay lập tức.' if current_friction > 0.3 else f'Mức độ ma sát thấp cho thấy năng lực giải quyết của AI hiện tại tương đối cân bằng và đáp ứng ổn định cho các tác vụ của nhóm <b>{selected_job}</b>.'}
     </div>
     """, unsafe_allow_html=True)
 
@@ -308,24 +293,6 @@ with tab2:
         else:
             st.info("Không có dữ liệu lo ngại rủi ro AI.")
 
-    # KHỐI TƯƠNG QUAN TÂM LÝ
-    st.markdown("##### 📊 Ma Trận Tương Quan Mức Độ Kỳ Vọng Tự Động Hóa (Psychological Matrix)")
-    radar_cols_analysis = []
-    for keyword in ['Repetitive', 'Human Error', 'Stress', 'Difficulty', 'Free Time']:
-        found = [c for c in d_sub.columns if keyword in c]
-        if found: radar_cols_analysis.append(found[0])
-    
-    if len(radar_cols_analysis) >= 2 and len(d_sub) > 5:
-        corr_matrix = d_sub[radar_cols_analysis].corr()
-        fig_heat = px.imshow(
-            corr_matrix, text_auto=".2f", labels=dict(color="Hệ số tương quan"),
-            x=['Lặp lại', 'Lỗi người', 'Áp lực', 'Độ khó', 'T.gian rảnh'],
-            y=['Lặp lại', 'Lỗi người', 'Áp lực', 'Độ khó', 'T.gian rảnh'],
-            color_continuous_scale="Blugrn"
-        )
-        fig_heat.update_layout(height=300, margin=dict(t=10, b=10, l=10, r=10))
-        st.plotly_chart(fig_heat, use_container_width=True)
-
     st.markdown("---")
     st.markdown("#### 💸 Mô Hình Giả Lập Giá Trị Thặng Dư Kinh Tế Số (ROI Simulation)")
     st.write("Thử điều chỉnh thanh trượt để đo lường tác động kinh tế khi ứng dụng AI Agent vào phân khúc này:")
@@ -346,11 +313,12 @@ with tab2:
     with col_m2:
         st.success(f"💵 Giá trị dòng tiền tối ưu hóa ước tính: **${money_saved:,.2f} USD**")
             
-    st.markdown("""
+    # 🆕 HỘP THOẠI INSIGHT 2 ĐỘNG THEO THANH SLIDER NGƯỜI DÙNG KÉO CHỌN
+    st.markdown(f"""
     <div class="insight-box">
-        <b>💡 Điều tra sâu Tâm lý và Mô hình Giả lập Tài chính:</b><br>
-        • Tổng cộng có hơn <b>82.4%</b> nhân sự ngành Khoa học máy tính ủng hộ việc tích hợp công nghệ để xử lý các công việc tẻ nhạt.<br>
-        • <span class="highlight-pink">Ứng dụng thực tiễn trong Kinh doanh:</span> Mô hình giả lập kinh tế phía trên chỉ ra, việc triển khai AI Agent không thuần túy là cắt giảm nhân sự, mà là giải phóng quỹ thời gian lớn của lao động chất xám đắt đỏ sang các công việc tạo giá trị thặng dư cao hơn cho cấu trúc tài chính của doanh nghiệp.
+        <b>💡 Phân tích định lượng ROI cho mục nghiên cứu <span class="highlight-navy">{selected_job}</span>:</b><br>
+        • Nếu doanh nghiệp dịch chuyển thành công <span class="highlight-pink">{slider_auto}%</span> khối lượng công việc lặp lại cho AI Agent thực thi, tổng số giờ lao động được giải phóng của nhóm này sẽ lên tới <span class="highlight-pink">{hours_saved:,.0f} giờ mỗi năm</span>.<br>
+        • <b>Tác động dòng tiền thực tế:</b> Dựa trên mức lương trung bình thực tế từ bộ số liệu WorkBank, việc chuyển giao này kết hợp hiệu suất cắt giảm sai sót <span class="highlight-pink">{slider_eff}%</span> sẽ giữ lại cho tổ chức khoản thặng dư ngân sách lên tới <span class="highlight-pink">${money_saved:,.2f} USD</span>. Con số này là minh chứng rõ ràng cho hiệu quả kinh tế số của mô hình.
     </div>
     """, unsafe_allow_html=True)
 
@@ -398,11 +366,12 @@ with tab3:
         
     with col_r2:
         st.markdown("<br><br>", unsafe_allow_html=True)
-        st.markdown("""
+        # 🆕 HỘP THOẠI INSIGHT 3 ĐỘNG THEO PHÂN TÍCH RADAR
+        st.markdown(f"""
         <div class="insight-box">
-            <b>📋 Ý nghĩa thực tiễn và Khoảng cách Chiến lược (Expectation Gap):</b><br>
-            Biểu đồ mạng nhện bộc lộ rõ khoảng cách lớn giữa mong muốn giảm áp lực công việc, phòng ngừa lỗi sai của nhân sự (Đường màu xanh kéo rất rộng ở mục <i>Tránh lỗi con người</i>) và năng lực giải quyết thực tế của công nghệ AI hiện hành (Đường màu hồng nét đứt).<br><br>
-            Sự bất đối xứng này đòi hỏi giải pháp thiết kế cấu trúc AI Agent phải dịch chuyển từ dạng chatbot hỏi đáp thông thường sang dạng <b>Autonomous Agent (Agent tự trị)</b> có khả năng tự thực thi quy trình để bù đắp khoảng cách an toàn mà con người kỳ vọng.
+            <b>📋 Đánh giá Khoảng cách Chiến lược (Expectation Gap) cho nhóm <span class="highlight-navy">{selected_job}</span>:</b><br>
+            Biểu đồ mạng nhện bộc lộ rõ khoảng lệch thực tế đối với nhóm nhân sự này. Hiện hành, khả năng đáp ứng thực tế của công nghệ AI đạt điểm chuyên gia trung bình là <span class="highlight-pink">{ai_readiness/20:.2f}/5</span>.<br><br>
+            {f'Đối với <b>{selected_job}</b>, động lực phòng ngừa lỗi con người và giảm tải áp lực đang vượt xa khả năng công nghệ. Điều này đòi hỏi giải pháp thiết kế cấu trúc AI Agent phải dịch chuyển sang dạng <b>Autonomous Agent (Agent tự trị)</b>.' if current_friction > 0.2 else 'Khoảng cách kỳ vọng của nhóm này ở mức an toàn, có thể triển khai ngay các dạng Chatbot hỗ trợ thông thường.'}
         </div>
         """, unsafe_allow_html=True)
 
